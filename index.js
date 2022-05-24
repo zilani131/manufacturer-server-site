@@ -81,6 +81,28 @@ async function run(){
             const result = await profilesCollection.find(query).toArray();
             res.send(result);
         })
+        // getting all user 
+        app.get('/alluser',async(req,res)=>{
+            const result=await profilesCollection.find().toArray();
+            res.send(result)
+        })
+        // make admin
+        app.put('/alluser',async(req,res)=>{
+            const role=req.body.role;
+        
+            const email=req.query.email;
+            console.log(role,email);
+       
+            const filter ={email:email};
+            const options={upsert:true};
+            const updateDoc={
+                $set: {
+                   role:role,
+                  }
+            }
+            const result = await profilesCollection.updateOne(filter, updateDoc, options);
+            res.send(result)
+        })
         // user reviews getting 
         app.get('/reviews',async(req,res)=>{
             const query={};
