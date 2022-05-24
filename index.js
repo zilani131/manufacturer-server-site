@@ -19,6 +19,7 @@ async function run(){
         await client.connect();
         const toolsCollection=client.db("manufacture").collection("tools");
         const profilesCollection=client.db("manufacture").collection("user");
+        const detailsCollection=client.db("manufacture").collection("userDetails");
         // tools collection
         app.get('/tools',async (req,res)=>{
             const query={};
@@ -34,6 +35,7 @@ async function run(){
             const tool=await toolsCollection.findOne(query)
             res.send(tool)
         })
+        // 
         // update quantity
         app.put('/purchase/:_id',async(req,res)=>{
             const _id=req.params._id;
@@ -47,6 +49,14 @@ async function run(){
                   },
             }
             const result = await toolsCollection.updateOne(filter, updateDoc, options);
+            res.send(result)
+        })
+        // save details
+        app.post('/userdetails',async(req,res)=>{
+            
+            const profile=req.body;
+            console.log(profile)
+            const result = await detailsCollection.insertOne(profile);
             res.send(result)
         })
         // user information 
