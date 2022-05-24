@@ -20,6 +20,7 @@ async function run(){
         const toolsCollection=client.db("manufacture").collection("tools");
         const profilesCollection=client.db("manufacture").collection("user");
         const detailsCollection=client.db("manufacture").collection("userDetails");
+        const reviewsCollection=client.db("manufacture").collection("reviews");
         // tools collection
         app.get('/tools',async (req,res)=>{
             const query={};
@@ -58,6 +59,12 @@ async function run(){
             const result = await profilesCollection.find(query).toArray();
             res.send(result);
         })
+        // user reviews getting 
+        app.get('/reviews',async(req,res)=>{
+            const query={};
+            const result=await reviewsCollection.find(query).toArray();
+            res.send(result)
+        })
         // save details
         app.post('/userdetails',async(req,res)=>{
             
@@ -75,6 +82,13 @@ async function run(){
             res.send(result)
         })
         // ratings
+        app.post('/reviews',async (req,res)=>{
+          
+            const reviews=req.body;
+            console.log(reviews)
+            const result = await reviewsCollection.insertOne(reviews);
+            res.send(result)
+        })
         // user information update
         app.put('/user',async(req,res)=>{
             const email=req.query.email;
