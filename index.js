@@ -51,6 +51,13 @@ async function run(){
             const result = await toolsCollection.updateOne(filter, updateDoc, options);
             res.send(result)
         })
+        // geting user order list 
+        app.get('/user',async(req,res)=>{
+            const email=req.query.email;
+            const query={email:email};
+            const result = await profilesCollection.find(query).toArray();
+            res.send(result);
+        })
         // save details
         app.post('/userdetails',async(req,res)=>{
             
