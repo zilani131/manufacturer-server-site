@@ -28,6 +28,13 @@ async function run(){
             const tools =await toolsCollection.find(query).toArray();
             res.send(tools);
         })
+        // tools added api
+        app.post('/tools',async(req,res)=>{
+            const tools=req.body;
+            console.log(tools)
+            const result= await toolsCollection.insertOne(tools)
+            res.send(result);
+        })
         // purchase tool api
         app.get('/purchase/:_id',async (req,res)=>{
             const _id=req.params._id;
@@ -52,6 +59,21 @@ async function run(){
             const result = await toolsCollection.updateOne(filter, updateDoc, options);
             res.send(result)
         })
+            // update quantity
+            app.put('/cancel/:_id',async(req,res)=>{
+                const _id=req.params._id;
+                const newQuantity = req.body.newQuantity;
+                console.log(newQuantity)
+                const filter={_id:ObjectId(_id)};
+                const options = { upsert: true };
+                const updateDoc={
+                    $set: {
+                        quantity:newQuantity,
+                      },
+                }
+                const result = await toolsCollection.updateOne(filter, updateDoc, options);
+                res.send(result)
+            })
         // geting user order list 
         app.get('/user',async(req,res)=>{
             const email=req.query.email;
