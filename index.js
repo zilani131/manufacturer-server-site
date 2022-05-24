@@ -74,6 +74,7 @@ async function run(){
             const result = await profilesCollection.insertOne(profile);
             res.send(result)
         })
+        // ratings
         // user information update
         app.put('/user',async(req,res)=>{
             const email=req.query.email;
@@ -90,6 +91,14 @@ async function run(){
             }
             const result = await profilesCollection.updateOne(filter, updateDoc, options);
             res.send(result)
+        })
+        // Delte  a product of the user
+        app.delete('/user/:_id',async(req,res)=>{
+            const id=req.params._id;
+            console.log(id);
+            const filter={_id:ObjectId(id)};
+            const result= await profilesCollection.deleteOne(filter);
+            res.json(result);
         })
     }
     finally{
