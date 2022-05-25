@@ -74,12 +74,17 @@ async function run(){
                 const result = await toolsCollection.updateOne(filter, updateDoc, options);
                 res.send(result)
             })
-        // geting user order list 
+        // geting user order list by email
         app.get('/user',async(req,res)=>{
             const email=req.query.email;
             const query={email:email};
             const result = await profilesCollection.find(query).toArray();
             res.send(result);
+        })
+        // getting all user order list for admin
+        app.get('/orderlist',async(req,res)=>{
+            const result = await profilesCollection.find().toArray();
+            res.send(result); 
         })
         // getting all user 
         app.get('/alluser',async(req,res)=>{
