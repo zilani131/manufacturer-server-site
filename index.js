@@ -59,6 +59,20 @@ async function run(){
             const result = await toolsCollection.updateOne(filter, updateDoc, options);
             res.send(result)
         })
+        // shipping an order 
+        app.put('/order/:_id',async(req,res)=>{
+            const _id=req.params._id;
+            const newStatus=req.body.status;
+            const filter={_id:ObjectId(_id)};
+            const options={upsert:true};
+            const updateDoc={
+                $set:{
+                    status:newStatus,
+                },
+            }
+            const result =await profilesCollection.updateOne(filter,updateDoc,options)
+            res.send(result)
+        })
             // update quantity
             app.put('/cancel/:_id',async(req,res)=>{
                 const _id=req.params._id;
@@ -162,6 +176,11 @@ async function run(){
             const filter={_id:ObjectId(id)};
             const result= await profilesCollection.deleteOne(filter);
             res.json(result);
+        })
+        // product Delete
+        app.delete('/product/:_id',async(req,res)=>{
+            const result =await toolsCollection.deleteOne({_id:ObjectId(req.params._id)})  //shortand the code 
+            res.send(result)
         })
     }
     finally{
