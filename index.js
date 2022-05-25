@@ -43,6 +43,13 @@ async function run(){
             const tool=await toolsCollection.findOne(query)
             res.send(tool)
         })
+        // geting payment information 
+        app.get('/payment/:_id',async(req,res)=>{
+            const _id=req.params._id;
+            const query={_id:ObjectId(_id)}
+            const payment=await profilesCollection.findOne(query)
+            res.send(payment)
+        })
         // 
         // update quantity
         app.put('/purchase/:_id',async(req,res)=>{
