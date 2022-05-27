@@ -3,6 +3,7 @@ const express = require('express');
 const cors=require('cors');
 
 require('dotenv').config();
+const stripe = require('stripe')('sk_test_51L3OyhAvteCnNItpNsrkDuJrjbM0TF2qvjUYqbswJczodeXA9sqCt2rIME89vyEUKSmyePybFOyOWxYRRdjYHwsy004g9Tta8T');
 const app = express();
 const port = process.env.PORT||5000;
 app.use(cors());
@@ -35,6 +36,25 @@ async function run(){
             const result= await toolsCollection.insertOne(tools)
             res.send(result);
         })
+        // payment intent
+        app.post("/create-payment-intent", async (req, res) => {
+            const service = req.body;
+            console.log(service)
+            const price=service.totalAmount;
+            const amount=price*100;
+
+          
+            // Create a PaymentIntent with the order amount and currency
+            const paymentIntent = await stripe.paymentIntents.create({
+              amount: amount,
+              currency: "usd",
+              payment_method_types: ['card'],
+            });
+            
+            res.send({
+              clientSecret: paymentIntent.client_secret,
+            });
+          });
         // purchase tool api
         app.get('/purchase/:_id',async (req,res)=>{
             const _id=req.params._id;
@@ -50,6 +70,14 @@ async function run(){
             const payment=await profilesCollection.findOne(query)
             res.send(payment)
         })
+    // user details 
+    app.get('/userdetails',async(req,res)=>{
+        const email=req.query.email;
+        const query={email:email};
+        const result =await detailsCollection.findOne(query);
+        res.send(result);
+    })
+  
         // 
         // update quantity
         app.put('/purchase/:_id',async(req,res)=>{
@@ -109,7 +137,7 @@ async function run(){
         })
         // getting all user 
         app.get('/alluser',async(req,res)=>{
-            const result=await profilesCollection.find().toArray();
+            const result=await detailsCollection.find().toArray();
             res.send(result)
         })
         // make admin
@@ -126,7 +154,7 @@ async function run(){
                    role:role,
                   }
             }
-            const result = await profilesCollection.updateOne(filter, updateDoc, options);
+            const result = await detailsCollection.updateOne(filter, updateDoc, options);
             res.send(result)
         })
         // user reviews getting 
@@ -136,13 +164,27 @@ async function run(){
             res.send(result)
         })
         // save details
-        app.post('/userdetails',async(req,res)=>{
+        // app.post('/userdetails',async(req,res)=>{
             
-            const profile=req.body;
-            console.log(profile)
-            const result = await detailsCollection.insertOne(profile);
-            res.send(result)
+        //     const profile=req.body;
+        //     console.log(profile)
+        //     const result = await detailsCollection.insertOne(profile);
+        //     res.send(result)
+        // })
+        // save user details
+        app.put('/userdetails/:email',async(req,res)=>{
+            const email=req.params.email;
+            const user=req.body;
+            const filter={email:email};
+            const options={upsert:true};
+            const updateDoc={
+                $set:user,
+            };
+            const result=await detailsCollection.updateOne(filter,updateDoc,options)
+            res.send(result);
         })
+        // getting user details
+        app.get('/')
         // user information 
         app.post('/user',async (req,res)=>{
             const email =req.query.email;
