@@ -71,8 +71,8 @@ async function run(){
             res.send(payment)
         })
     // user details 
-    app.get('/userdetails',async(req,res)=>{
-        const email=req.query.email;
+    app.get('/userdetails/:email',async(req,res)=>{
+        const email=req.params.email;
         const query={email:email};
         const result =await detailsCollection.findOne(query);
         res.send(result);
@@ -183,8 +183,25 @@ async function run(){
             const result=await detailsCollection.updateOne(filter,updateDoc,options)
             res.send(result);
         })
+        app.put('/updatedetails/:email',async(req,res)=>{
+            const email=req.params.email;
+            const linkedin=req.body.linkedin;
+            const phone=req.body.phone;
+            const education =req.body.education;
+            const filter={email:email};
+            const options={upsert:true};
+            const updateDoc={
+                $set: {
+                    education:education,
+                    phone:phone,
+                    linkedin:linkedin,
+                  }
+            }
+            const result=await detailsCollection.updateOne(filter,updateDoc,options)
+               res.send(result);
+        })
         // getting user details
-        app.get('/')
+        
         // user information 
         app.post('/user',async (req,res)=>{
             const email =req.query.email;
