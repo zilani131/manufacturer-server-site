@@ -3,7 +3,7 @@ const express = require('express');
 const cors=require('cors');
 
 require('dotenv').config();
-const stripe = require('stripe')('sk_test_51L3OyhAvteCnNItpNsrkDuJrjbM0TF2qvjUYqbswJczodeXA9sqCt2rIME89vyEUKSmyePybFOyOWxYRRdjYHwsy004g9Tta8T');
+// const stripe = require('stripe')('sk_test_51L3OyhAvteCnNItpNsrkDuJrjbM0TF2qvjUYqbswJczodeXA9sqCt2rIME89vyEUKSmyePybFOyOWxYRRdjYHwsy004g9Tta8T');
 const app = express();
 const port = process.env.PORT||5000;
 app.use(cors());
@@ -12,7 +12,7 @@ app.use(express.json());
 // pw: Hub1HeEUkgGJiGqy
 
 
-const uri = "mongodb+srv://manufacture_zilani:Hub1HeEUkgGJiGqy@cluster0.z3wp7.mongodb.net/?retryWrites=true&w=majority";
+const uri = `mongodb+srv://${process.env.userinfo}:${process.env.pw}@cluster0.z3wp7.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 async function run(){
@@ -37,24 +37,24 @@ async function run(){
             res.send(result);
         })
         // payment intent
-        app.post("/create-payment-intent", async (req, res) => {
-            const service = req.body;
-            console.log(service)
-            const price=service.totalAmount;
-            const amount=price*100;
+        // app.post("/create-payment-intent", async (req, res) => {
+        //     const service = req.body;
+        //     console.log(service)
+        //     // const price=service.totalAmount;
+        //     // const amount=price*100;
 
           
-            // Create a PaymentIntent with the order amount and currency
-            const paymentIntent = await stripe.paymentIntents.create({
-              amount: amount,
-              currency: "usd",
-              payment_method_types: ['card'],
-            });
+        //     // // Create a PaymentIntent with the order amount and currency
+        //     // const paymentIntent = await stripe.paymentIntents.create({
+        //     //   amount: amount,
+        //     //   currency: "usd",
+        //     //   payment_method_types: ['card'],
+        //     // });
             
-            res.send({
-              clientSecret: paymentIntent.client_secret,
-            });
-          });
+        //     res.json({
+        //       clientSecret: paymentIntent.client_secret,
+        //     });
+        //   });
         // purchase tool api
         app.get('/purchase/:_id',async (req,res)=>{
             const _id=req.params._id;
@@ -75,7 +75,7 @@ async function run(){
         const email=req.params.email;
         const query={email:email};
         const result =await detailsCollection.findOne(query);
-        res.send(result);
+        res.json(result);
     })
   
         // 
